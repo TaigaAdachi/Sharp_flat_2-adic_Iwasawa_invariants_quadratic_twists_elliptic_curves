@@ -5,7 +5,7 @@ This repository contains the SageMath code used to compute the Iwasawa invariant
 
 The computations in this repository were performed using
 
-- SageMath 9.7;
+- SageMath 10.7;
 - Python 3.10.5;
 - macOS.
 

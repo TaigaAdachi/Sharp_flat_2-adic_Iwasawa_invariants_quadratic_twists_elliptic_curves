@@ -1,33 +1,57 @@
-def neron_periods(E, prec=100):
-    E = E.global_minimal_model()
-    omega1, omega2 = E.period_lattice().basis(prec=prec)
-    c_inf = E.real_components()
+from sage.all import EllipticCurve, ZZ, RealField
 
-    Omega_plus  = c_inf * abs(omega1)
-    Omega_minus = c_inf * abs(imag_part(omega2))
-
-    return Omega_plus, Omega_minus
+PREC = 100             # bits
+DIGITS = 26            # displayed significant decimal digits
+R = RealField(PREC)
 
 
-examples = [
-    ("E1", EllipticCurve([0, -1, 1, -10, -20]), [13, 29]),
-    ("E2", EllipticCurve([0,  1, 1,   1,   0]), [17, 97])
+def neron_periods_abs(E):
+    """Return (|Omega_E^+|, |Omega_E^-|) for the curves in the examples."""
+    A = E.global_minimal_model()
+    # Each of our eight curves has a connected real locus: kappa(A)=1.
+    assert A.real_components() == 1, "Unexpected number of real components"
+    w1, w2 = A.period_lattice().basis(prec=PREC)
+    # Convention 2.1 and Remark 3.8: real period |w1|;
+    # imaginary period 2*|Im(w2)|. The factor 2 cancels in a ratio.
+    return R(abs(w1)), R(2) * R(abs(w2.imag()))
+
+
+def show_example(label, E, D):
+    D = ZZ(D)
+    A = E.global_minimal_model()
+    AD = E.quadratic_twist(D).global_minimal_model()
+
+    plus_A, minus_A = neron_periods_abs(A)
+    plus_AD, minus_AD = neron_periods_abs(AD)
+    ratio_plus = plus_AD / plus_A
+    ratio_minus = minus_AD / minus_A
+    theoretical = R(1) / R(D).sqrt()
+    err_plus = abs(ratio_plus - theoretical)
+    err_minus = abs(ratio_minus - theoretical)
+
+    print("{}  D = {}".format(label, D))
+    print("  |Omega^+(E^D) / Omega^+(E)| = {}".format(ratio_plus.n(digits=DIGITS)))
+    print("  |Omega^-(E^D) / Omega^-(E)| = {}".format(ratio_minus.n(digits=DIGITS)))
+    print("  1/sqrt(D)                     = {}".format(theoretical.n(digits=DIGITS)))
+    print("  absolute error (+)           = {}".format(err_plus))
+    print("  absolute error (-)           = {}".format(err_minus))
+    print()
+    return max(err_plus, err_minus)
+
+
+# Example 3.1: E1 : y^2 + y = x^3 - x^2 - 10*x - 20 (LMFDB 11.a2)
+E1 = EllipticCurve([0, -1, 1, -10, -20])
+# Example 3.2: E2 : y^2 + y = x^3 + x^2 + x (LMFDB 19.a3)
+E2 = EllipticCurve([0, 1, 1, 1, 0])
+
+print("Neron period ratios -- SageMath, {}-bit precision".format(PREC))
+print()
+errors = [
+    show_example("Example 3.1 / E1", E1, 13),
+    show_example("Example 3.1 / E1", E1, 29),
+    show_example("Example 3.2 / E2", E2, 17),
+    show_example("Example 3.2 / E2", E2, 97),
 ]
-
-
-for name, E, twists in examples:
-    Omega_plus, Omega_minus = neron_periods(E)
-
-    for D in twists:
-        ED = E.quadratic_twist(D).global_minimal_model()
-        Omega_plus_D, Omega_minus_D = neron_periods(ED)
-
-        ratio_plus  = Omega_plus_D / Omega_plus
-        ratio_minus = Omega_minus_D / Omega_minus
-        expected    = 1 / RealField(100)(D).sqrt()
-
-        print(name + ", D =", D)
-        print("Omega_plus(E^D)  / Omega_plus(E)  =", ratio_plus)
-        print("Omega_minus(E^D) / Omega_minus(E) =", ratio_minus)
-        print("1 / sqrt(D)                       =", expected)
-        print()
+print("Maximum absolute error (four D's; both signs) = {}".format(max(errors)))
+assert max(errors) < R(10)**(-25), "Numerical period ratios disagree"
+print("PASS: all eight ratios agree with 1/sqrt(D) to better than 1e-25")

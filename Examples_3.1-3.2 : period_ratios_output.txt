@@ -1,0 +1,32 @@
+Neron period ratios -- SageMath, 100-bit precision
+
+Example 3.1 / E1  D = 13
+  |Omega^+(E^D) / Omega^+(E)| = 0.27735009811261456100917087
+  |Omega^-(E^D) / Omega^-(E)| = 0.27735009811261456100917087
+  1/sqrt(D)                     = 0.27735009811261456100917087
+  absolute error (+)           = 0.00000000000000000000000000000
+  absolute error (-)           = 3.9443045261050590270586428264e-31
+
+Example 3.1 / E1  D = 29
+  |Omega^+(E^D) / Omega^+(E)| = 0.18569533817705186314657622
+  |Omega^-(E^D) / Omega^-(E)| = 0.18569533817705186314657622
+  1/sqrt(D)                     = 0.18569533817705186314657622
+  absolute error (+)           = 1.9721522630525295135293214132e-31
+  absolute error (-)           = 1.9721522630525295135293214132e-31
+
+Example 3.2 / E2  D = 17
+  |Omega^+(E^D) / Omega^+(E)| = 0.24253562503633297351890646
+  |Omega^-(E^D) / Omega^-(E)| = 0.24253562503633297351890646
+  1/sqrt(D)                     = 0.24253562503633297351890646
+  absolute error (+)           = 3.9443045261050590270586428264e-31
+  absolute error (-)           = 0.00000000000000000000000000000
+
+Example 3.2 / E2  D = 97
+  |Omega^+(E^D) / Omega^+(E)| = 0.10153461651336190434789909
+  |Omega^-(E^D) / Omega^-(E)| = 0.10153461651336190434789909
+  1/sqrt(D)                     = 0.10153461651336190434789909
+  absolute error (+)           = 0.00000000000000000000000000000
+  absolute error (-)           = 0.00000000000000000000000000000
+
+Maximum absolute error (four D's; both signs) = 3.9443045261050590270586428264e-31
+PASS: all eight ratios agree with 1/sqrt(D) to better than 1e-25
